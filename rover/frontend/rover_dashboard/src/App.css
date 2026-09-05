@@ -1,0 +1,198 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0a0d11;
+  color: #e6e9ee;
+  font-family: system-ui, sans-serif;
+}
+
+.dashboard {
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.header h1 {
+  margin: 0;
+  font-family: monospace;
+  font-size: 18px;
+  letter-spacing: 0.05em;
+}
+
+.mode {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.mode.drive {
+  background: #1e3a2f;
+  color: #4ade80;
+  border: 1px solid #2f5c47;
+}
+
+.mode.arm {
+  background: #3a2f1e;
+  color: #fbbf24;
+  border: 1px solid #5c4a2f;
+}
+
+.feeds-row,
+.telemetry-row {
+  display: grid;
+  gap: 16px;
+}
+
+.feeds-row {
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 16px;
+}
+
+.telemetry-row {
+  grid-template-columns: 2fr 1fr;
+}
+
+.panel {
+  background: #12161c;
+  border: 1px solid #232a34;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 8px 12px;
+  color: #6b7686;
+  border-bottom: 1px solid #232a34;
+  font-family: monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.feed-content {
+  aspect-ratio: 4 / 3;
+  padding: 8px;
+}
+
+.rgb-feed {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 6px;
+  background: linear-gradient(
+    135deg,
+    #1a2b1f,
+    #26402c,
+    #1a2b1f
+  );
+  color: #7fa888;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.detection-box {
+  position: absolute;
+  top: 40%;
+  left: 38%;
+  width: 90px;
+  height: 70px;
+  border: 2px solid #4ade80;
+  border-radius: 3px;
+}
+
+.detection-box span {
+  position: absolute;
+  top: -18px;
+  left: 0;
+  color: #4ade80;
+  font-size: 11px;
+}
+
+.thermal-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+}
+
+.wheel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 16px;
+}
+
+.wheel-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #0d1117;
+  border: 1px solid #232a34;
+  border-radius: 8px;
+}
+
+.wheel-card > span {
+  color: #8b95a5;
+  font-size: 12px;
+}
+
+.wheel-card strong {
+  font-family: monospace;
+  font-size: 22px;
+  font-weight: normal;
+}
+
+.wheel-card small {
+  color: #6b7686;
+  font-size: 11px;
+}
+
+.status-list {
+  padding: 16px;
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 2;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+}
+
+.status-dot.ok {
+  background: #4ade80;
+}
+
+.status-dot.error {
+  background: #ef4444;
+}
+
+.battery {
+  margin-top: 8px;
+  color: #8b95a5;
+}
+
+@media (max-width: 800px) {
+  .feeds-row,
+  .telemetry-row {
+    grid-template-columns: 1fr;
+  }
+}
