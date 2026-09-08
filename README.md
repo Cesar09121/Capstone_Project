@@ -284,22 +284,7 @@ The interface may display:
 
 A conceptual interface could resemble:
 
-+-----------------------------------------------------+
-|                    ROVER CONTROL                    |
-+--------------------------+--------------------------+
-|                          |                          |
-|       RGB CAMERA         |      THERMAL IMAGE       |
-|                          |                          |
-|      Live 1080p Feed     |        Heat Map          |
-|                          |                          |
-+--------------------------+--------------------------+
-| Controller: Connected                               |
-| Rover: Ready                                        |
-| Arm: Ready                                          |
-|                                                     |
-| FL: -- RPM       FR: -- RPM                         |
-| RL: -- RPM       RR: -- RPM                         |
-+-----------------------------------------------------+
+![Rover User Interface](Documentation/Images/UserInterface.png)
 
 The final interface design will evolve as the individual subsystems are implemented.
 
@@ -396,35 +381,7 @@ The software will be divided into multiple modules rather than implemented as on
 
 Possible modules include:
 
-rover/
-|
-+-- raspberry_pi/
-|   |
-|   +-- controller/
-|   |   +-- ps5_controller.py
-|   |
-|   +-- vision/
-|   |   +-- rgb_camera.py
-|   |   +-- object_detection.py
-|   |   +-- thermal_camera.py
-|   |
-|   +-- communication/
-|   |   +-- arduino_serial.py
-|   |   +-- arm_serial.py
-|   |
-|   +-- ui/
-|       +-- rover_ui.py
-|
-+-- arduino/
-|   |
-|   +-- rover_controller/
-|       +-- rover_controller.ino
-|
-+-- documentation/
-|
-+-- cad/
-|
-+-- README.md
+![Rover Software Architecture](Documentation/Images/Rover-Software-Architecture.png)
 
 The exact structure may change as development progresses.
 
