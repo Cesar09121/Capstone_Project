@@ -1,46 +1,40 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 
-// Mock rover data
-// Replace with backend/WebSocket data later
-
-function useMockRoverData() {
+function useRoverData() {
   const [data, setData] = useState({
-    connected: true,
-    controllerConnected: true,
+    connected: false,
+    controllerConnected: false,
     mode: "DRIVE",
     wheels: { FL: 0, FR: 0, RL: 0, RR: 0 },
-    drivers: { MDD10A_1: "OK", MDD10A_2: "OK" },
-    battery: 12.8,
+    drivers: {
+    MDD10A_1: "UNKNOWN",
+    MDD10A_2: "UNKNOWN",
+},
+battery: 0,
   });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setData((prev) => {
-        const jitter = () =>
-          Math.max(
-            0,
-            Math.round(
-              60 +
-                Math.sin(Date.now() / 500) * 40 +
-                (Math.random() * 20 - 10)
-            )
-          );
+   useEffect(() => {
+    const socket = new WebSocket("ws://localhost:8765");
 
-        return {
-          ...prev,
-          wheels: {
-            FL: jitter(),
-            FR: jitter(),
-            RL: jitter(),
-            RR: jitter(),
-          },
-          battery: +(12.4 + Math.random() * 0.4).toFixed(1),
-        };
-      });
-    }, 400);
+    socket.onopen = () => {
+      console.log("Connected to rover backend");
+    };
 
-    return () => clearInterval(interval);
+    socket.onmessage = (event) => {
+      const roverData = JSON.parse(event.data);
+      console.log(roverData);
+
+      setData(roverData);
+    };
+
+    socket.onclose = () => {
+      console.log("Disconnected from rover backend");
+    };
+
+    return () => {
+      socket.close();
+    };
   }, []);
 
   return data;
@@ -136,7 +130,7 @@ function RgbFeed() {
 }
 
 export default function RoverDashboard() {
-  const data = useMockRoverData();
+  const data = useRoverData();
 
   const wheels = [
     ["FL", "Front Left"],
