@@ -5,11 +5,13 @@ function useRoverData() {
   const [data, setData] = useState({
     connected: false,
     controllerConnected: false,
+    rgbCameraConnected: false,
+    thermalCameraConnected: false,
     mode: "DRIVE",
     wheels: { FL: 0, FR: 0, RL: 0, RR: 0 },
     drivers: {
-    MDD10A_1: "UNKNOWN",
-    MDD10A_2: "UNKNOWN",
+     MDD10A_1: "UNKNOWN",
+     MDD10A_2: "UNKNOWN",
 },
 battery: 0,
   });
@@ -208,6 +210,20 @@ export default function RoverDashboard() {
                 data.controllerConnected
                   ? "Connected"
                   : "Disconnected"
+              }`}
+            />
+
+            <StatusRow
+              ok={data.rgbCameraConnected}
+              text={`RGB Camera: ${
+                data.rgbCameraConnected ? "Connected" : "Disconnected"
+              }`}
+            />
+
+            <StatusRow
+              ok={data.thermalCameraConnected}
+              text={`Thermal Camera: ${
+              data.thermalCameraConnected ? "Connected" : "Disconnected"
               }`}
             />
 

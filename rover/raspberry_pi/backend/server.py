@@ -21,6 +21,8 @@ def get_mock_rover_data():
     return {
         "connected": True,
         "controllerConnected": True,
+        "rgbCameraConnected": True,
+        "thermalCameraConnected": True,
         "mode": "DRIVE",
         "wheels": {
             "FL": jitter(),
