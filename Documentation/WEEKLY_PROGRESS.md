@@ -42,12 +42,20 @@ By the end of Week 2, the project had progressed from the planning stage into in
 
 ---
 
-## Week 3 - In Progress
+## Week 3 - Robotic Arm Testing and Verification
 
 ### Accomplishments
-
-- To be updated.
+- Installed and configured the Hiwonder LeArm PC control software and required serial driver.
+- Connected the robotic arm to the computer and verified successful communication through the PC software.
+- Checked the arm's calibration and confirmed that the servos returned to their expected neutral positions.
+- Made a small adjustment to the gripper calibration so that the jaws properly align when closed.
+- Tested individual servo movement using Slider Control Mode and confirmed that all six joints and the gripper operate correctly.
+- Tested Coordinate Control Mode and verified that the arm can move the end effector using X, Y, and Z commands.
+- Investigated the provided factory action-group files and determined that the downloaded files were designed for the BUS-servo version of the arm rather than the PWM-servo version being used.
+- Avoided using the incompatible BUS-servo action files after confirming that they caused incorrect arm movement.
+- Tested the included wireless controller and verified that the arm is capable of receiving remote-control commands through the controller and receiver.
+- Confirmed that the provided Arduino software supports PWM servo control, which will be useful when custom arm control is implemented later.
 
 ### Week 3 Outcome
 
-To be updated.
+The robotic arm was successfully connected, calibrated, and tested through both the PC software and the included wireless controller. Individual joint control and coordinate-based movement were verified, confirming that the arm hardware and controller are functioning properly. Compatibility differences between the PWM and BUS-servo versions were also identified, which will help ensure that the correct software and commands are used when Raspberry Pi and PS5 controller integration begins.
