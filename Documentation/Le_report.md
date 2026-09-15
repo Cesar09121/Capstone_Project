@@ -28,3 +28,15 @@ Created a React-based rover dashboard prototype. The interface currently contain
   The frontend currently uses mock data so the user interface can be developed before the physical hardware is connected.
 
   The next step is to build the Python backend communication layer and connect the backend to the React dashboard. After that, the simulated data will gradually be replaced by real Raspberry Pi, camera, thermal sensor, and Arduino telemetry data.
+
+# Week 2
+
+Implemented the Python backend communication layer and connected it to React rover dashboard through webSocket. The current backend generates simulated rover telemetry and sends the data to the frontend as JSON. The React dashboard receives the data and updates the displayed values in real time.
+
+## Backend/WebSocket Communication flow
+
+Python backend -> Generate Mock rover telemetry -> JSON -> WebSocket -> React frontend
+
+### Next step
+
+The next step is to begin replacing simulated backend data with real subsystem data from the Raspberry Pi, RGB camera, thermal sensor, and Arduino telemetry.
