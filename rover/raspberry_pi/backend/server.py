@@ -5,7 +5,7 @@ import random
 import time
 import websockets
 
-
+# Generate the mock rover telemetry
 def get_mock_rover_data():
     t = time.time()
 
@@ -36,7 +36,7 @@ def get_mock_rover_data():
         "battery": round(random.uniform(12.4, 12.8), 1),
     }
 
-
+# Send the data to the frontend
 async def send_rover_data(websocket):
     print("Dashboard connected")
 
@@ -51,7 +51,7 @@ async def send_rover_data(websocket):
     except websockets.ConnectionClosed:
         print("Dashboard disconnected")
 
-
+# Start the WebSocket server
 async def main():
     async with websockets.serve(
         send_rover_data,

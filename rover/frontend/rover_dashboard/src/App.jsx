@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 
+// Rover data now come from backend through WebSocket
 function useRoverData() {
   const [data, setData] = useState({
     connected: false,
@@ -15,7 +16,7 @@ function useRoverData() {
 },
 battery: 0,
   });
-
+   // Connect frontend to backend through WebSocket
    useEffect(() => {
     const socket = new WebSocket("ws://localhost:8765");
 
@@ -24,6 +25,7 @@ battery: 0,
     };
 
     socket.onmessage = (event) => {
+      // Receive rover data from backend
       const roverData = JSON.parse(event.data);
       console.log(roverData);
 
