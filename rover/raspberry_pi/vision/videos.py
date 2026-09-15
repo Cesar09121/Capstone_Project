@@ -1,6 +1,8 @@
 import cv2
-from flask import Flask, Response
+from flask import Flask, Response, jsonify
 from object_detection import ObjectDetector
+
+latest_detection=[]
 
 app = Flask(__name__)
 # Load YOLO detector once at startup
@@ -10,14 +12,20 @@ detector = ObjectDetector(confidence=0.5)
 camera = cv2.VideoCapture(0)
 
 def generate_frames():
+    global latest_detections
+
     while True:
         ok, frame = camera.read()
 
         if not ok:
             break
 
-        # Run YOLO detection
+        # Run object detection
         detections = detector.detect(frame)
+        print(detections)
+
+        # Save latest YOLO results
+        latest_detections = detections
 
         # Draw detection boxes
         frame = detector.draw(frame, detections)
@@ -44,6 +52,10 @@ def video_feed():
         generate_frames(),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
+
+@app.route("/detections")
+def detections():
+    return jsonify(latest_detections)
 
 if __name__ == "__main__":
     print("Video stream running")
