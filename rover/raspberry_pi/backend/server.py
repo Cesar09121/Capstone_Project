@@ -4,6 +4,18 @@ import math
 import random
 import time
 import websockets
+import urllib.request
+
+
+def get_yolo_detections():
+    try:
+        with urllib.request.urlopen(
+            "http://localhost:5000/detections",
+            timeout=0.2,
+        ) as response:
+            return json.loads(response.read().decode())
+    except Exception:
+        return []
 
 # Generate the mock rover telemetry
 def get_mock_rover_data():
@@ -34,6 +46,7 @@ def get_mock_rover_data():
             "MDD10A_2": "OK",
         },
         "battery": round(random.uniform(12.4, 12.8), 1),
+        "detections": get_yolo_detections()
     }
 
 # Send the data to the frontend
