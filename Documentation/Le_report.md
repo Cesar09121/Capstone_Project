@@ -40,3 +40,34 @@ Python backend -> Generate Mock rover telemetry -> JSON -> WebSocket -> React fr
 ### Next step
 
 The next step is to begin replacing simulated backend data with real subsystem data from the Raspberry Pi, RGB camera, thermal sensor, and Arduino telemetry.
+
+# Week 3
+
+Integrated the real RGB camera and YOLO object detection into the React rover dashboard.
+
+A new Flask video server was created to capture frames from the camera using OpenCV, run YOLO object detection, draw bounding boxes and confidence scores, encode the annotated frames as JPEG images, and stream them to the React dashboard using MJPEG.
+
+## RGB Camera / YOLO Flow
+
+RGB Camera -> OpenCV -> YOLO -> Bounding Boxes + Confidence -> MJPEG Stream -> React Dashboard
+The previous fake RGB placeholder in the dashboard was replaced with a real live camera stream.
+
+## YOLO Detection Data
+
+A `/detections` endpoint was added to the Flask server to provide structured YOLO detection results as JSON.
+Each detection now includes:
+
+- object label
+- confidence score
+- bounding box coordinates
+
+Example:
+{
+"label": "person",
+"confidence": 0.75,
+"box": [x1, y1, x2, y2]
+}
+
+### Next Step
+
+The next step is to move the Python camera, YOLO, and backend services from the laptop to the Raspberry Pi 5 and test them with the real rover USB camera.
