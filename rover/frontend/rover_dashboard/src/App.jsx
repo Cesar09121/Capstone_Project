@@ -124,11 +124,11 @@ function thermalColor(t) {
 function RgbFeed() {
   return (
     <div className="rgb-feed">
-      <span>RGB CAMERA - awaiting stream</span>
-
-      <div className="detection-box">
-        <span>person 0.87</span>
-      </div>
+      <img
+        src="http://localhost:5000/video_feed"
+        alt="Rover RGB Camera"
+        className="rgb-video"
+      />
     </div>
   );
 }
