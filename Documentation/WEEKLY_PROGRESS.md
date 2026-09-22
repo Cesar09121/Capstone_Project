@@ -59,3 +59,35 @@ By the end of Week 2, the project had progressed from the planning stage into in
 ### Week 3 Outcome
 
 The robotic arm was successfully connected, calibrated, and tested through both the PC software and the included wireless controller. Individual joint control and coordinate-based movement were verified, confirming that the arm hardware and controller are functioning properly. Compatibility differences between the PWM and BUS-servo versions were also identified, which will help ensure that the correct software and commands are used when Raspberry Pi and PS5 controller integration begins.
+
+---
+
+## Week 4 - Raspberry Pi Camera and Controller Integration
+
+### Accomplishments
+
+- Connected the RGB USB camera to the Raspberry Pi 5 and verified that it was successfully recognized by the system.
+
+- Tested the RGB camera by capturing images and displaying a live video feed.
+
+- Verified that the RGB camera's night vision mode functions correctly in low-light conditions.
+
+- Connected the MLX90640 thermal camera directly to the Raspberry Pi 5 through the GPIO pins using I2C communication.
+
+- Enabled I2C communication on the Raspberry Pi and confirmed that the MLX90640 was detected at its expected address of `0x33`.
+
+- Installed the required Python libraries for communicating with and processing data from the MLX90640 thermal camera.
+
+- Created and tested a Python program that reads the MLX90640's 32 x 24 thermal sensor array and displays the minimum, maximum, and average detected temperatures.
+
+- Created an OpenCV-based thermal camera program that converts the MLX90640 temperature data into a live thermal image.
+
+- Connected the PS5 DualSense controller to the Raspberry Pi 5 through Bluetooth.
+
+- Successfully paired, bonded, trusted, and connected the DualSense controller to the Raspberry Pi, establishing the communication path needed for future rover and robotic arm control.
+
+### Week 4 Outcome
+
+By the end of Week 4, the Raspberry Pi 5 was successfully connected to the RGB camera, MLX90640 thermal camera, and PS5 DualSense controller. The RGB camera was verified to provide both standard and night vision video, while the thermal camera successfully produced temperature readings and a live colorized thermal image. The PS5 controller was also successfully connected through Bluetooth, completing the initial setup of the main camera and controller devices that will later be integrated into the rover control system.
+
+---
