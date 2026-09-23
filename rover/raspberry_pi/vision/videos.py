@@ -2,7 +2,7 @@ import cv2
 from flask import Flask, Response, jsonify
 from object_detection import ObjectDetector
 
-latest_detection=[]
+latest_detections=[]
 
 app = Flask(__name__)
 # Load YOLO detector once at startup
@@ -22,7 +22,6 @@ def generate_frames():
 
         # Run object detection
         detections = detector.detect(frame)
-        print(detections)
 
         # Save latest YOLO results
         latest_detections = detections
@@ -59,10 +58,10 @@ def detections():
 
 if __name__ == "__main__":
     print("Video stream running")
-    print("http://localhost:5000/video_feed")
+    print("http://localhost:5001/video_feed")
 
     app.run(
         host="0.0.0.0",
-        port=5000,
+        port=5001,
         threaded=True,
     )

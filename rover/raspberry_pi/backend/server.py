@@ -6,11 +6,13 @@ import time
 import websockets
 import urllib.request
 
+# Use "localhost" for laptop webcam, Pi IP for rover camera
+VIDEO_HOST = "localhost"
 
 def get_yolo_detections():
     try:
         with urllib.request.urlopen(
-            "http://localhost:5000/detections",
+            f"http://{VIDEO_HOST}:5001/detections",
             timeout=0.2,
         ) as response:
             return json.loads(response.read().decode())
@@ -18,7 +20,7 @@ def get_yolo_detections():
         return []
 
 # Generate the mock rover telemetry
-def get_mock_rover_data():
+def get_mock_rover_data(detections):
     t = time.time()
 
     def jitter():
@@ -46,7 +48,7 @@ def get_mock_rover_data():
             "MDD10A_2": "OK",
         },
         "battery": round(random.uniform(12.4, 12.8), 1),
-        "detections": get_yolo_detections()
+        "detections": detections
     }
 
 # Send the data to the frontend
@@ -55,7 +57,9 @@ async def send_rover_data(websocket):
 
     try:
         while True:
-            data = get_mock_rover_data()
+            detections = await asyncio.to_thread(get_yolo_detections)
+
+            data = get_mock_rover_data(detections)
 
             await websocket.send(json.dumps(data))
 
@@ -68,7 +72,7 @@ async def send_rover_data(websocket):
 async def main():
     async with websockets.serve(
         send_rover_data,
-        "localhost",
+        "0.0.0.0",
         8765,
     ):
         print("WebSocket server running")
