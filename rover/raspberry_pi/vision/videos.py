@@ -58,7 +58,7 @@ def detections():
 
 if __name__ == "__main__":
     print("Video stream running")
-    print("http://localhost:5001/video_feed")
+    print("http://192.168.1.175:5001/video_feed")
 
     app.run(
         host="0.0.0.0",

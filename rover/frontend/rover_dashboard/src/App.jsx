@@ -125,7 +125,7 @@ function RgbFeed() {
   return (
     <div className="rgb-feed">
       <img
-        src="http://192.168.1.176/video_feed"
+        src="http://192.168.1.175:5001/video_feed"
         alt="Rover RGB Camera"
         className="rgb-video"
       />
