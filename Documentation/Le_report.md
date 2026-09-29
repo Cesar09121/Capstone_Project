@@ -71,3 +71,16 @@ Example:
 ### Next Step
 
 The next step is to move the Python camera, YOLO, and backend services from the laptop to the Raspberry Pi 5 and test them with the real rover USB camera.
+
+# Week 4
+
+Integrated the RGB camera from the Raspberry Pi into the React rover dashboard.
+The Raspberry Pi now runs the RGB camera and object-detection pipeline, and the live video stream is displayed directly in the dashboard.
+
+## RGB Camera Flow
+
+RGB Camera -> Raspberry Pi -> OpenCV -> YOLO Object Detection -> MJPEG Video Stream -> React Dashboard
+
+### Next Step
+
+The next step is to integrate the thermal sensor and Arduino telemetry into the React rover dashboard, replacing the remaining simulated data with real hardware inputs.
