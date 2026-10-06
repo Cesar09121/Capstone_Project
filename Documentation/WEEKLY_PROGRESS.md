@@ -125,3 +125,33 @@ By the end of Week 4, the Raspberry Pi 5 was successfully connected to the RGB c
 By the end of Week 5, the RGB camera system was successfully moved from a standalone Raspberry Pi camera test into the rover's main UI system. The Raspberry Pi now captures the RGB camera feed, runs YOLOv8 object detection, and streams the processed video over the local network so it can be viewed directly inside the laptop UI. The GitHub repository was also set up on the Raspberry Pi to simplify future software updates and development. In addition to the software integration, initial development of the rover's physical body and frame began, with focus placed on designing a 3D-printable structure that will support and organize the rover's main hardware components.
 
 ---
+
+## Week 6 - Thermal Camera UI Integration and Motor Driver Testing
+
+### Accomplishments
+
+- Successfully connected the MLX90640 thermal camera feed to the rover's user interface.
+
+- Implemented WebSocket communication between the Raspberry Pi and laptop UI to transmit the thermal camera data in real time.
+
+- Verified that the thermal camera feed could be viewed directly inside the rover UI while the MLX90640 remained connected to the Raspberry Pi through I2C.
+
+- Confirmed that the Raspberry Pi could continuously read the MLX90640's 32 x 24 thermal sensor data and send the processed thermal image to the frontend.
+
+- Integrated the thermal camera into the existing rover software system alongside the RGB camera functionality.
+
+- Connected the rover motors to their motor drivers and verified the required power and control connections.
+
+- Created a basic motor test program to verify the core functionality of the motors and motor drivers.
+
+- Used the test program to confirm that the Raspberry Pi/rover control system could send commands to the motor drivers and operate the connected motors.
+
+- Began testing the motor system separately from the full rover control software so that basic hardware functionality could be confirmed before integrating movement controls into the main system.
+
+### Week 6 Outcome
+
+By the end of Week 6, the MLX90640 thermal camera was successfully integrated into the rover's user interface using WebSocket communication. The Raspberry Pi is now able to collect thermal data through I2C, process it into a usable thermal image, and transmit the feed to the laptop UI in real time. This completes another major part of the rover's camera system and allows both RGB and thermal imaging to be incorporated into the overall rover interface.
+
+The rover's drive system also began hardware testing this week. The motors were connected to their motor drivers, and a test program was created to verify the basic operation of the motors and drivers. Confirming this core functionality provides the foundation for the next stage of development, which will involve integrating motor control with the rover's main control system and controller inputs.
+
+---
