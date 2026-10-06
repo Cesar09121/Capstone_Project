@@ -91,3 +91,37 @@ The robotic arm was successfully connected, calibrated, and tested through both 
 By the end of Week 4, the Raspberry Pi 5 was successfully connected to the RGB camera, MLX90640 thermal camera, and PS5 DualSense controller. The RGB camera was verified to provide both standard and night vision video, while the thermal camera successfully produced temperature readings and a live colorized thermal image. The PS5 controller was also successfully connected through Bluetooth, completing the initial setup of the main camera and controller devices that will later be integrated into the rover control system.
 
 ---
+
+## Week 5 - RGB Camera UI Integration and Rover Frame Development
+
+### Accomplishments
+
+- Configured the Raspberry Pi 5 to run the RGB camera video stream through a Flask server.
+
+- Connected the RGB camera feed from the Raspberry Pi to the laptop over the local network using the Pi's IP address.
+
+- Integrated the RGB camera stream into the rover's existing frontend and backend UI system.
+
+- Verified that the live RGB camera feed could be viewed directly inside the camera display area of the rover UI.
+
+- Integrated the existing YOLOv8 object detection system with the Raspberry Pi camera stream.
+
+- Configured the Raspberry Pi to run the object detection code so detected objects and bounding boxes could be processed before the video feed was sent to the laptop UI.
+
+- Set up the project repository on the Raspberry Pi using GitHub so the rover software can be updated more easily as development continues.
+
+- Installed and configured the required Python packages, including Flask, OpenCV, NumPy, and Ultralytics, inside the Raspberry Pi virtual environment.
+
+- Verified communication between the Raspberry Pi and laptop using the Flask video stream endpoint and local network connection.
+
+- Began development of the rover's physical body and frame for 3D printing.
+
+- Started planning the size, layout, and placement of major rover components including the Raspberry Pi, cameras, motors, electronics, and other hardware.
+
+- Began considering how the frame will provide enough strength and mounting space while still being practical to manufacture using a 3D printer.
+
+### Week 5 Outcome
+
+By the end of Week 5, the RGB camera system was successfully moved from a standalone Raspberry Pi camera test into the rover's main UI system. The Raspberry Pi now captures the RGB camera feed, runs YOLOv8 object detection, and streams the processed video over the local network so it can be viewed directly inside the laptop UI. The GitHub repository was also set up on the Raspberry Pi to simplify future software updates and development. In addition to the software integration, initial development of the rover's physical body and frame began, with focus placed on designing a 3D-printable structure that will support and organize the rover's main hardware components.
+
+---
