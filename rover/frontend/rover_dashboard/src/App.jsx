@@ -44,52 +44,47 @@ battery: 0,
   return data;
 }
 
-// Simulated 32x24 MLX90640 thermal feed.
-function ThermalFeed() {
+// Simulated 32x24 MLX90640 thermal feed from backend
+function ThermalFeed({ thermal }) {
   const canvasRef = useRef(null);
-
+ 
   useEffect(() => {
+    // Thermal data arrives from backend
+    if (!thermal || !thermal.pixels || thermal.pixels.length === 0) {
+      return;
+    }
+ 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-
-    const COLS = 32;
-    const ROWS = 24;
-
-    let animationId;
-
-    function render() {
-      const t = Date.now() / 1000;
-
-      const hotX = COLS / 2 + Math.sin(t) * 8;
-      const hotY = ROWS / 2 + Math.cos(t * 0.7) * 5;
-
-      const cellW = canvas.width / COLS;
-      const cellH = canvas.height / ROWS;
-
-      for (let y = 0; y < ROWS; y++) {
-        for (let x = 0; x < COLS; x++) {
-          const dist = Math.hypot(x - hotX, y - hotY);
-          const temp = Math.max(0, 1 - dist / 12);
-
-          ctx.fillStyle = thermalColor(temp);
-
-          ctx.fillRect(
-            x * cellW,
-            y * cellH,
-            cellW + 1,
-            cellH + 1
-          );
-        }
+ 
+    const COLS = thermal.width;
+    const ROWS = thermal.height;
+ 
+    // Avoid dividing by zero if every pixel is the same temperature
+    const range = thermal.max - thermal.min || 1;
+ 
+    const cellW = canvas.width / COLS;
+    const cellH = canvas.height / ROWS;
+ 
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        const value = thermal.pixels[y * COLS + x];
+ 
+        // Scale temperature to 0-1 for the color map
+        const temp = (value - thermal.min) / range;
+ 
+        ctx.fillStyle = thermalColor(temp);
+ 
+        ctx.fillRect(
+          x * cellW,
+          y * cellH,
+          cellW + 1,
+          cellH + 1
+        );
       }
-
-      animationId = requestAnimationFrame(render);
     }
-
-    render();
-
-    return () => cancelAnimationFrame(animationId);
-  }, []);
-
+  }, [thermal]);
+ 
   return (
     <canvas
       ref={canvasRef}
@@ -120,7 +115,7 @@ function thermalColor(t) {
   )`;
 }
 
-// RGB placeholder until the real camera stream is connected
+// Real camera stream is connected
 function RgbFeed() {
   return (
     <div className="rgb-feed">
@@ -168,7 +163,7 @@ export default function RoverDashboard() {
           </div>
 
           <div className="feed-content">
-            <ThermalFeed />
+            <ThermalFeed thermal={data.thermal} />
           </div>
         </section>
       </div>

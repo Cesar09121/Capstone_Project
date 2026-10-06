@@ -7,10 +7,11 @@ import cv2 # handles camera and drawing
 from ultralytics import YOLO
 class ObjectDetector:
     # Loads YOLOv8-nano model, only reports detection if confidence >= 50%
-    def __init__(self, model_path="yolov8n.pt", confidence=0.5):
+    def __init__(self, model_path="yolov8n.pt", confidence=0.5,imgsz=320):
         # Nano is used because it is lightweight and better for Raspberry Pi later.
         self.model = YOLO(model_path)
         self.confidence = confidence
+        self.imgsz = imgsz
 
     def detect(self, frame):
         """
@@ -27,6 +28,7 @@ class ObjectDetector:
         results = self.model(
             frame,
             conf=self.confidence,
+            imgsz=self.imgsz,
             verbose=False
         )
 
