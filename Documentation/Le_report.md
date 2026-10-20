@@ -84,3 +84,16 @@ RGB Camera -> Raspberry Pi -> OpenCV -> YOLO Object Detection -> MJPEG Video Str
 ### Next Step
 
 The next step is to integrate the thermal sensor and Arduino telemetry into the React rover dashboard, replacing the remaining simulated data with real hardware inputs.
+
+# Week 5
+
+Integrated the Thermal camera from the Raspberry Pi into the React rover dashboard.
+The Raspberry Pi now runs the thermal sensor and generates a heatmap, which is displayed directly in the dashboard.
+
+## Thermal Camera Flow
+
+Thermal Sensor -> Raspberry Pi -> Heatmap Generation -> React Dashboard
+
+### Next Step
+
+The next step is to integrate the Arduino telemetry into the React rover dashboard, replacing the remaining simulated data with real hardware inputs.
