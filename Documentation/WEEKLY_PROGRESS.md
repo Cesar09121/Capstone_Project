@@ -155,3 +155,39 @@ By the end of Week 6, the MLX90640 thermal camera was successfully integrated in
 The rover's drive system also began hardware testing this week. The motors were connected to their motor drivers, and a test program was created to verify the basic operation of the motors and drivers. Confirming this core functionality provides the foundation for the next stage of development, which will involve integrating motor control with the rover's main control system and controller inputs.
 
 ---
+
+## Week 8 - PS5 Controller Integration and Proportional Rover Drive
+
+### Accomplishments
+
+- Reconnected and successfully paired the PS5 DualSense controller with the Raspberry Pi 5 through Bluetooth.
+
+- Verified that the Raspberry Pi could recognize the DualSense controller and establish the connection required for future rover and robotic arm controls.
+
+- Connected the Arduino directly to the Raspberry Pi through USB, allowing the same connection to provide both power to the Arduino and serial communication between the two devices.
+
+- Established the control architecture where the Raspberry Pi reads commands from the PS5 controller and sends motor control information to the Arduino over USB serial communication.
+
+- Confirmed the rover motor layout so that Motors 1 and 2 control the right side of the rover while Motors 3 and 4 control the left side.
+
+- Updated the Arduino motor control program to accept independent left-side and right-side motor speed commands from the Raspberry Pi.
+
+- Changed the motor control system from simple forward, backward, left, right, and stop commands to signed speed values ranging from \`-255\` to \`255\`.
+
+- Added proportional motor speed control so that the amount the PS5 controller joystick is moved determines the speed of the rover motors.
+
+- Implemented differential drive mixing so that forward/backward movement and steering can be controlled simultaneously using the left analog stick.
+
+- Added zero-radius turning functionality by allowing the left and right motor groups to rotate in opposite directions when the joystick is moved fully left or right.
+
+- Added a joystick dead zone to prevent small analog stick movements or controller drift from unintentionally moving the rover.
+
+- Added a communication safety timeout to the Arduino so that the motors automatically stop if commands from the Raspberry Pi are interrupted or lost.
+
+- Updated the Raspberry Pi controller_drive.py program to read the DualSense analog stick values, calculate proportional left and right motor speeds, and continuously transmit those values to the Arduino.
+
+### Week 8 Outcome
+
+By the end of Week 8, the PS5 DualSense controller, Raspberry Pi, Arduino, and rover motor control system were integrated into a single control architecture. The Raspberry Pi can now interpret analog joystick input and convert it into proportional left and right motor speed commands that are sent to the Arduino through USB serial communication. The updated system supports proportional forward and backward movement, gradual steering, and zero-radius turning while also incorporating a communication safety timeout. This establishes the primary manual driving control system that will be used once the rover wheels and drivetrain are fully mounted.
+
+---
