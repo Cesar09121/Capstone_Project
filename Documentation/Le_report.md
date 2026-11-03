@@ -96,4 +96,58 @@ Thermal Sensor -> Raspberry Pi -> Heatmap Generation -> React Dashboard
 
 ### Next Step
 
-The next step is to integrate the Arduino telemetry into the React rover dashboard, replacing the remaining simulated data with real hardware inputs.
+Creating benchmark for optimal performance of the thermal sensor and RGB camera integration on the Raspberry Pi.
+
+# Week 6
+
+Optimized the RGB camera video stream on the Raspberry Pi to reduce lag, based on the midterm feedback to fix video streaming for the CV pipeline.
+
+- Added a background thread that continuously reads the camera and keeps only the newest frame, so YOLO always processes the current frame instead of a backlog of old frames
+- Set the camera buffer size to 1 and the resolution to 640x480
+- Reduced the JPEG quality to 70 so each frame is smaller to send over Wi-Fi
+- Reduced the YOLO input size (imgsz) from 640 to 288 pixels for faster detection on the Raspberry Pi
+- Added an FPS print to measure detection speed
+
+## Flow
+
+RGB Camera -> Background Capture Thread (newest frame only) -> YOLO (imgsz=288) -> MJPEG Stream (JPEG quality 70) -> React Dashboard
+
+## Result
+
+Laptop: YOLO runs at about 27-28 FPS, keeping up with the camera
+Raspberry Pi: the video stream is faster and no longer falls seconds behind; YOLO runs at about 13 FPS at imgsz=288
+
+### Next Step
+
+Improve the thermal camera update speed on the Raspberry Pi by increasing the I2C bus speed and the sensor refresh rate, and then continue finalizing the operator dashboard.
+
+# Week 7
+
+Improved the thermal camera update speed on the Raspberry Pi and created benchmark scripts to test and optimize both the thermal camera and the RGB object detection
+
+- Increased the I2C bus speed to 400 kHz in /boot/firmware/config.txt (dtparam=i2c_arm_baudrate=400000)
+- Increased the MLX90640 refresh rate from 4 Hz to 8 Hz
+- Handled more I2C read errors (RuntimeError, OSError) so one bad read does not stop the thermal thread
+- Reduced the WebSocket send interval from 0.4 s to 0.25 s
+- Added an FPS print to measure the thermal speed
+
+## Thermal Camera Flow
+
+Thermal Sensor -> I2C (400 kHz) -> Raspberry Pi (8 Hz, 768 temperatures) -> WebSocket (every 0.25 s) -> React Dashboard (heatmap)
+
+## Thermal Benchmark
+
+![](./images/thermal_benchmark.png)
+Selected setting: 8 Hz, which gives 3.9 FPS (2x faster than before) and matches the 0.25 s WebSocket send interval.
+
+## RGB Benchmark
+
+The benchmark captures 30 frames from the camera and tests every combination of YOLO image size (640, 416, 320, 288, 256) and confidence score (0.25, 0.4, 0.5, 0.6) on the same frames.
+
+![](./images/rgb_benchmark.png)
+
+Selected settings: imgsz=288 and confidence=0.5, which gives about 13 FPS with reliable detections.
+
+## Next Step
+
+The next step is to finalize the operator dashboard: add automatic WebSocket reconnection, make the status indicators show the real connection state, display the YOLO detection list, and replace the remaining mock telemetry with real Arduino data once the drive system is ready.
