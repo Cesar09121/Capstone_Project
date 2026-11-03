@@ -2,10 +2,10 @@ import asyncio
 import json
 import math
 import random
+import threading
 import time
 import websockets
 import urllib.request
-import threading
 
 # Use "localhost" for laptop webcam, Pi IP for rover camera
 VIDEO_HOST = "localhost"
@@ -20,23 +20,26 @@ def get_yolo_detections():
     except Exception:
         return []
 
-# Thermal Camera
+# Thermal camera (MLX90640)
+
 THERMAL_WIDTH = 32
 THERMAL_HEIGHT = 24
- 
+
 latest_thermal = []
 mlx = None
+
 # Try to open the real MLX90640, fall back to mock data if not found
 try:
     import board
     import busio
     import adafruit_mlx90640
- 
+
     i2c = busio.I2C(board.SCL, board.SDA, frequency=800000)
     mlx = adafruit_mlx90640.MLX90640(i2c)
-    mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_4_HZ
+    # 8 Hz needs the faster I2C speed
+    mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_8_HZ
     print("MLX90640 connected")
- 
+
 except Exception as e:
     print("Thermal camera not found, using mock data:", e)
 
@@ -45,7 +48,7 @@ def get_mock_thermal():
     t = time.time()
     cx = 16 + math.sin(t * 0.8) * 10
     cy = 12 + math.cos(t * 0.6) * 6
- 
+
     pixels = []
     for y in range(THERMAL_HEIGHT):
         for x in range(THERMAL_WIDTH):
@@ -56,31 +59,43 @@ def get_mock_thermal():
                 + random.uniform(-0.3, 0.3)
             )
             pixels.append(round(value, 1))
- 
+
     return pixels
 
 # Keep reading thermal frames in the background
 def read_thermal_loop():
     global latest_thermal
     frame = [0.0] * (THERMAL_WIDTH * THERMAL_HEIGHT)
- 
+
+    frames = 0
+    start = time.time()
+
     while True:
         if mlx is None:
             latest_thermal = get_mock_thermal()
             time.sleep(0.25)
             continue
- 
+
         try:
             mlx.getFrame(frame)
             latest_thermal = [round(v, 1) for v in frame]
-        except ValueError:
+            frames += 1
+        except (ValueError, RuntimeError, OSError):
             # Occasional bad I2C read, keep the last good frame
             pass
- 
+
+        # Print the thermal speed every 5 seconds
+        elapsed = time.time() - start
+
+        if elapsed >= 5:
+            print(f"Thermal: {frames / elapsed:.1f} fps")
+            frames = 0
+            start = time.time()
+
 # Package thermal data for the dashboard
 def get_thermal_data():
     pixels = latest_thermal
- 
+
     return {
         "width": THERMAL_WIDTH,
         "height": THERMAL_HEIGHT,
@@ -134,15 +149,16 @@ async def send_rover_data(websocket):
 
             await websocket.send(json.dumps(data))
 
-            await asyncio.sleep(0.4)
+            await asyncio.sleep(0.25)
 
     except websockets.ConnectionClosed:
         print("Dashboard disconnected")
 
 # Start the WebSocket server
 async def main():
+    # Start the thermal camera reader
     threading.Thread(target=read_thermal_loop, daemon=True).start()
-    
+
     async with websockets.serve(
         send_rover_data,
         "0.0.0.0",
