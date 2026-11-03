@@ -375,6 +375,160 @@ This architecture allows each controller to perform the tasks for which it is be
 
 ---
 
+## Motor Encoder Feedback and Speed Calculations
+
+### Overview
+
+The rover uses four 12V DC geared motors rated at 110 RPM, each equipped with an integrated rotary encoder. These encoders provide feedback about motor rotation, allowing the Arduino to calculate the rotational speed of each wheel.
+
+The encoder data will be used to monitor individual motor performance, estimate the rover's travel speed, and eventually display real-time speed measurements in the user interface.
+
+### How the Motor Encoders Work
+
+Each motor contains a quadrature encoder with two output channels, **Channel A and Channel B**. As the motor rotates, the encoder produces electrical pulses that the Arduino can count to determine rotational movement.
+
+- **Channel A:** Produces pulses used to measure rotation.
+- **Channel B:** Produces pulses offset from Channel A, allowing the direction of rotation to be determined.
+- **Pulse Count:** The number of detected pulses during a specified interval is used to calculate rotational speed.
+- **Gear Ratio:** Since the encoder measures rotation of the motor shaft rather than directly measuring wheel rotation, the gearbox reduction must be accounted for.
+
+The Arduino will continuously monitor the encoder signals and calculate RPM values for each of the four motors.
+
+### Calculating Wheel RPM
+
+The first step is to convert the encoder pulse count into revolutions per minute (RPM).
+
+The equation is:
+
+$$
+RPM = \frac{N \times 60}{PPR_{\text{wheel}} \times T}
+$$
+
+Where:
+
+- **N:** Number of encoder counts measured during the sampling interval.
+- **PPR:** Effective encoder counts per revolution of the wheel/output shaft.
+- **T:** Sampling interval in seconds.
+- **60:** Conversion factor from seconds to minutes.
+
+If the encoder is mounted before the gearbox, the effective counts per wheel revolution can be calculated as:
+
+$$
+PPR_{\text{wheel}} = PPR_{\text{motor}} \times G
+$$
+
+Where:
+
+- **PPR_motor:** Encoder counts per revolution of the motor shaft.
+- **G:** Gear reduction ratio.
+
+Combining these equations gives:
+
+$$
+RPM = \frac{N \times 60}{PPR_{\text{motor}} \times G \times T}
+$$
+
+The exact PPR value depends on the encoder specifications and whether the Arduino counts one signal edge, both edges, or all four quadrature edges.
+
+### Converting RPM to Rover Speed
+
+Once the wheel RPM is calculated, the rotational speed can be converted into linear speed using the wheel circumference.
+
+The rover uses wheels with a diameter of **65 mm (0.065 m)**.
+
+**Step 1: Calculate Wheel Circumference**
+
+$$
+C = \pi D
+$$
+
+$$
+C = \pi(0.065) \approx 0.2042 \text{ m}
+$$
+
+Each complete wheel revolution corresponds to approximately 0.2042 meters of travel, assuming no wheel slip.
+
+**Step 2: Calculate Linear Speed**
+
+$$
+v = \frac{RPM \times C}{60}
+$$
+
+Where:
+
+- **v:** Linear speed in meters per second (m/s).
+- **RPM:** Measured wheel revolutions per minute.
+- **C:** Wheel circumference in meters.
+
+**Step 3: Convert Speed to Miles per Hour**
+
+$$
+MPH = v \times 2.23694
+$$
+
+### Example Calculation at 110 RPM
+
+Assuming a wheel rotates at the motor's rated output speed of 110 RPM:
+
+$$
+v = \frac{110 \times 0.2042}{60}
+$$
+
+$$
+v \approx 0.374 \text{ m/s}
+$$
+
+Converting to miles per hour:
+
+$$
+MPH = 0.374 \times 2.23694
+$$
+
+$$
+\boxed{MPH \approx 0.84}
+$$
+
+At 110 RPM, the rover's theoretical travel speed is approximately **0.84 mph**, assuming no wheel slip. Actual speed will vary depending on motor load, battery voltage, terrain, and applied PWM.
+
+### Monitoring All Four Motors
+
+Each motor's encoder will be monitored independently so that the Arduino can calculate four RPM measurements:
+
+- **Motor 1:** Right-side wheel RPM
+- **Motor 2:** Right-side wheel RPM
+- **Motor 3:** Left-side wheel RPM
+- **Motor 4:** Left-side wheel RPM
+
+Each RPM measurement can be converted into an estimated wheel speed using the equations above.
+
+For straight-line movement, the average of the four signed wheel speeds can be used to estimate the rover's forward velocity:
+
+$$
+v_{\text{rover}} = \frac{v_1 + v_2 + v_3 + v_4}{4}
+$$
+
+Where:
+
+- **v_rover:** Estimated forward velocity of the rover.
+- **v₁, v₂, v₃, v₄:** Signed linear speeds calculated from the four motor encoders.
+
+During turning, the left and right sides rotate at different speeds, so the individual wheel measurements will be preserved to provide more accurate feedback.
+
+### Raspberry Pi and User Interface Integration
+
+The planned encoder feedback process will operate as follows:
+
+1. The motor encoders generate pulses as the wheels rotate.
+2. The Arduino counts the pulses from each motor during a defined sampling interval.
+3. The Arduino calculates the RPM and estimated linear speed of each wheel.
+4. The calculated values are transmitted to the Raspberry Pi through USB serial communication.
+5. The Raspberry Pi processes the measurements and forwards them to the user interface.
+6. The user interface displays real-time wheel RPM and rover speed information.
+
+This system will provide feedback about the rover's drivetrain and allow the operator to monitor motor performance while driving.
+
+**Future Development:** Encoder feedback may also be used to identify motors that are not rotating as expected, detect differences between wheel speeds, and improve motor control accuracy through closed-loop speed regulation.
+
 # Software Architecture
 
 The software will be divided into multiple modules rather than implemented as one large program.

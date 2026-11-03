@@ -191,3 +191,41 @@ The rover's drive system also began hardware testing this week. The motors were 
 By the end of Week 8, the PS5 DualSense controller, Raspberry Pi, Arduino, and rover motor control system were integrated into a single control architecture. The Raspberry Pi can now interpret analog joystick input and convert it into proportional left and right motor speed commands that are sent to the Arduino through USB serial communication. The updated system supports proportional forward and backward movement, gradual steering, and zero-radius turning while also incorporating a communication safety timeout. This establishes the primary manual driving control system that will be used once the rover wheels and drivetrain are fully mounted.
 
 ---
+
+---
+
+## Week 9 - Power Distribution Planning and Motor Encoder Research
+
+### Accomplishments
+
+- Researched methods for efficiently and safely distributing power throughout the rover's electrical system.
+
+- Reviewed the power requirements of the Raspberry Pi 5, Arduino, robotic arm, and motor drivers to determine how each component would receive the appropriate voltage and current.
+
+- Developed a power distribution plan using the rover's 12V 20Ah LiFePO4 battery as the primary power source for the system.
+
+- Planned the use of DC-DC buck converters to step down the battery voltage to 5V for the Raspberry Pi and 7.5V for the robotic arm while supplying 12V directly to the motor drivers.
+
+- Researched fused power distribution blocks to organize electrical connections and provide individual circuit protection for the different components.
+
+- Investigated appropriate fuse ratings, wire sizes, and connection methods to ensure reliable power delivery and reduce the risk of electrical faults.
+
+- Ordered the necessary power distribution components and wiring accessories to begin assembling the rover's electrical power system.
+
+- Began researching the integrated motor encoders and how they can be used to monitor the rotational speed of each of the rover's four motors.
+
+- Investigated how encoder pulse signals can be processed by the Arduino to calculate individual motor speeds in revolutions per minute (RPM).
+
+- Reviewed the specifications of the 110 RPM motors and their encoders to determine the information needed for accurate RPM calculations.
+
+- Researched how the calculated motor RPM values can be combined with the 65 mm wheel diameter to determine the linear speed of each wheel and estimate the rover's overall travel speed.
+
+- Began planning how encoder measurements and calculated speed values will eventually be transmitted from the Arduino through the Raspberry Pi to the user interface for real-time monitoring.
+
+- Began planning how the 4 encoders will be mapped to the Arduino which includes mapping the channel pins as well as power and ground. Plan to use simple distribution block using breadboad so that all 4 power and grounds can be mapped to geter to a single 5V and GND pin on the Arduino 
+
+### Week 9 Outcome
+
+By the end of Week 9, significant progress was made toward finalizing the rover's electrical power system and planning its motor speed monitoring functionality. A power distribution architecture was developed to supply the Raspberry Pi, Arduino, robotic arm, and motor drivers from the primary 12V battery while using voltage regulators and fused circuits to provide appropriate power and protection. The necessary components were ordered in preparation for electrical integration. Additionally, initial research was conducted on utilizing the motor encoders to measure individual wheel RPM and calculate the rover's travel speed using the wheel diameter. This research establishes the foundation for implementing real-time motor feedback and displaying wheel speed information in the rover's user interface during future development.
+
+---
