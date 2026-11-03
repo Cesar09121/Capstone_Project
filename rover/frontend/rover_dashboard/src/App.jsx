@@ -18,7 +18,7 @@ battery: 0,
   });
    // Connect frontend to backend through WebSocket
    useEffect(() => {
-    const socket = new WebSocket("ws://localhost:8765");
+    const socket = new WebSocket("ws://192.168.1.175:8765");
 
     socket.onopen = () => {
       console.log("Connected to rover backend");
