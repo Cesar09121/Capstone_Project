@@ -151,3 +151,26 @@ Selected settings: imgsz=288 and confidence=0.5, which gives about 13 FPS with r
 ## Next Step
 
 The next step is to finalize the operator dashboard: add automatic WebSocket reconnection, make the status indicators show the real connection state, display the YOLO detection list, and replace the remaining mock telemetry with real Arduino data once the drive system is ready.
+
+# Week 8
+
+Finalized the reliability of the operator dashboard, based on the midterm feedback to finalize the laptop operator display.
+Previously, the dashboard only connected to the backend once, when the page loaded. If the backend restarted, the dashboard stayed "Offline" until the page was refreshed. The status indicators were also hardcoded, so they always showed "Connected" even when a camera was not working.
+
+## Changes
+
+- Reconnect to the backend automatically every 2 s after a disconnect
+- RGB and thermal status dots now show the real connection state
+- Show "Waiting for camera..." when the video server is offline
+- Show YOLO detections (label, confidence, position) under the video
+- Set the rover IP in one place (ROVER_HOST)
+
+## Testing
+
+- The detection list updates live under the video
+- Stopping the backend shows all systems as offline; restarting it reconnects automatically
+- Stopping the video server shows "Waiting for camera..." and a red RGB status, while the thermal feed keeps working
+
+## Next Step
+
+The next step is to prepare the dashboard for real hardware data: detect the PS5 controller connection on the Raspberry Pi, and add an Arduino serial reader for real wheel RPMs once the drive system is ready.

@@ -1,6 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 
+// Pi IP for the rover, "localhost" for laptop testing
+// const ROVER_HOST = "192.168.1.175";
+const ROVER_HOST = "localhost";
+
+// Camera frame width from videos.py, used to find where an object is
+const FRAME_WIDTH = 640;
+
+// Milliseconds to wait before trying to reconnect
+const RECONNECT_DELAY = 2000;
+
 // Rover data now come from backend through WebSocket
 function useRoverData() {
   const [data, setData] = useState({
@@ -15,28 +25,53 @@ function useRoverData() {
      MDD10A_2: "UNKNOWN",
 },
 battery: 0,
+detections: [],
   });
    // Connect frontend to backend through WebSocket
    useEffect(() => {
-    const socket = new WebSocket("ws://192.168.1.175:8765");
+    let socket;
+    let reconnectTimer;
+    let stopped = false;
 
-    socket.onopen = () => {
-      console.log("Connected to rover backend");
-    };
+    function connect() {
+      socket = new WebSocket(`ws://${ROVER_HOST}:8765`);
 
-    socket.onmessage = (event) => {
-      // Receive rover data from backend
-      const roverData = JSON.parse(event.data);
-      console.log(roverData);
+      socket.onopen = () => {
+        console.log("Connected to rover backend");
+      };
 
-      setData(roverData);
-    };
+      socket.onmessage = (event) => {
+        // Receive rover data from backend
+        const roverData = JSON.parse(event.data);
 
-    socket.onclose = () => {
-      console.log("Disconnected from rover backend");
-    };
+        setData(roverData);
+      };
+
+      socket.onclose = () => {
+        console.log("Disconnected from rover backend, reconnecting...");
+
+        // Show everything as offline while disconnected
+        setData((prev) => ({
+          ...prev,
+          connected: false,
+          controllerConnected: false,
+          rgbCameraConnected: false,
+          thermalCameraConnected: false,
+          detections: [],
+        }));
+
+        // Try again unless the dashboard was closed
+        if (!stopped) {
+          reconnectTimer = setTimeout(connect, RECONNECT_DELAY);
+        }
+      };
+    }
+
+    connect();
 
     return () => {
+      stopped = true;
+      clearTimeout(reconnectTimer);
       socket.close();
     };
   }, []);
@@ -44,37 +79,37 @@ battery: 0,
   return data;
 }
 
-// Simulated 32x24 MLX90640 thermal feed from backend
+// 32x24 MLX90640 thermal feed from backend
 function ThermalFeed({ thermal }) {
   const canvasRef = useRef(null);
- 
+
   useEffect(() => {
     // Thermal data arrives from backend
     if (!thermal || !thermal.pixels || thermal.pixels.length === 0) {
       return;
     }
- 
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
- 
+
     const COLS = thermal.width;
     const ROWS = thermal.height;
- 
+
     // Avoid dividing by zero if every pixel is the same temperature
     const range = thermal.max - thermal.min || 1;
- 
+
     const cellW = canvas.width / COLS;
     const cellH = canvas.height / ROWS;
- 
+
     for (let y = 0; y < ROWS; y++) {
       for (let x = 0; x < COLS; x++) {
         const value = thermal.pixels[y * COLS + x];
- 
+
         // Scale temperature to 0-1 for the color map
         const temp = (value - thermal.min) / range;
- 
+
         ctx.fillStyle = thermalColor(temp);
- 
+
         ctx.fillRect(
           x * cellW,
           y * cellH,
@@ -84,7 +119,7 @@ function ThermalFeed({ thermal }) {
       }
     }
   }, [thermal]);
- 
+
   return (
     <canvas
       ref={canvasRef}
@@ -115,16 +150,59 @@ function thermalColor(t) {
   )`;
 }
 
-// Real camera stream is connected
-function RgbFeed() {
+// Live camera stream from videos.py
+function RgbFeed({ connected }) {
+  if (!connected) {
+    return (
+      <div className="rgb-feed">
+        <div className="feed-waiting">Waiting for camera...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="rgb-feed">
       <img
-        src="http://192.168.1.175:5001/video_feed"
+        src={`http://${ROVER_HOST}:5001/video_feed`}
         alt="Rover RGB Camera"
         className="rgb-video"
       />
     </div>
+  );
+}
+
+// Which third of the frame the object is in
+function objectPosition(box) {
+  const centerX = (box[0] + box[2]) / 2;
+
+  if (centerX < FRAME_WIDTH / 3) {
+    return "left";
+  }
+
+  if (centerX < (FRAME_WIDTH * 2) / 3) {
+    return "center";
+  }
+
+  return "right";
+}
+
+// List of objects YOLO currently sees
+function DetectionList({ detections }) {
+  if (!detections || detections.length === 0) {
+    return <div className="detection-empty">No objects detected</div>;
+  }
+
+  return (
+    <ul className="detection-list">
+      {detections.map((det, i) => (
+        <li className="detection-item" key={i}>
+          <span className="detection-label">{det.label}</span>
+          <span className="detection-info">
+            {Math.round(det.confidence * 100)}% · {objectPosition(det.box)}
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -153,8 +231,10 @@ export default function RoverDashboard() {
           <div className="panel-header">RGB Camera</div>
 
           <div className="feed-content">
-            <RgbFeed />
+            <RgbFeed connected={data.rgbCameraConnected} />
           </div>
+
+          <DetectionList detections={data.detections} />
         </section>
 
         <section className="panel">

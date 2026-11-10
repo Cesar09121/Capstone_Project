@@ -9,7 +9,7 @@ import urllib.request
 
 # Use "localhost" for laptop webcam, Pi IP for rover camera
 VIDEO_HOST = "localhost"
-
+ 
 def get_yolo_detections():
     try:
         with urllib.request.urlopen(
@@ -18,7 +18,8 @@ def get_yolo_detections():
         ) as response:
             return json.loads(response.read().decode())
     except Exception:
-        return []
+        # videos.py is not running or not reachable
+        return None
 
 # Thermal camera (MLX90640)
 
@@ -119,8 +120,8 @@ def get_mock_rover_data(detections):
     return {
         "connected": True,
         "controllerConnected": True,
-        "rgbCameraConnected": True,
-        "thermalCameraConnected": True,
+        "rgbCameraConnected": detections is not None,
+        "thermalCameraConnected": mlx is not None,
         "mode": "DRIVE",
         "wheels": {
             "FL": jitter(),
@@ -133,7 +134,7 @@ def get_mock_rover_data(detections):
             "MDD10A_2": "OK",
         },
         "battery": round(random.uniform(12.4, 12.8), 1),
-        "detections": detections,
+        "detections": detections or [],
         "thermal": get_thermal_data()
     }
 

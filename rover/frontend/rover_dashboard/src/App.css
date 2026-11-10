@@ -203,3 +203,52 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.feed-waiting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #7fa888;
+  font-family: monospace;
+  font-size: 13px;
+}
+ 
+/* YOLO detection list under the RGB video */
+.detection-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 8px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+ 
+.detection-item {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 4px 10px;
+  background: #0d1117;
+  border: 1px solid #232a34;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 12px;
+}
+.detection-label {
+  color: #4ade80;
+  text-transform: capitalize;
+}
+
+.detection-info {
+  color: #8b95a5;
+}
+
+.detection-empty {
+  padding: 0 12px 12px;
+  color: #6b7686;
+  font-family: monospace;
+  font-size: 12px;
+}
+ 
