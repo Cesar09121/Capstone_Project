@@ -1,0 +1,16 @@
+# Python packages for the Raspberry Pi rover software
+# Install inside the virtual environment:
+#   source ~/mlxenv/bin/activate
+#   pip install -r requirements.txt
+
+# Backend (server.py): WebSocket server for the dashboard
+websockets
+
+# Vision (videos.py, object_detection.py): camera, YOLO, video stream
+flask
+opencv-python
+ultralytics
+
+# Thermal camera (MLX90640 over I2C)
+adafruit-blinka
+adafruit-circuitpython-mlx90640

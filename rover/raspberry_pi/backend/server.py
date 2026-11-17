@@ -21,6 +21,20 @@ def get_yolo_detections():
         # videos.py is not running or not reachable
         return None
 
+# PS5 controller
+CONTROLLER_NAMES = ["DualSense", "Wireless Controller"]
+
+# Check the Pi's input devices for a connected PS5 controller
+def is_controller_connected():
+    try:
+        with open("/proc/bus/input/devices") as file:
+            devices = file.read()
+    except OSError:
+        # Not on Linux (laptop testing), so no controller info
+        return False
+
+    return any(name in devices for name in CONTROLLER_NAMES)
+
 # Thermal camera (MLX90640)
 
 THERMAL_WIDTH = 32
@@ -119,7 +133,7 @@ def get_mock_rover_data(detections):
 
     return {
         "connected": True,
-        "controllerConnected": True,
+        "controllerConnected": is_controller_connected(),
         "rgbCameraConnected": detections is not None,
         "thermalCameraConnected": mlx is not None,
         "mode": "DRIVE",
