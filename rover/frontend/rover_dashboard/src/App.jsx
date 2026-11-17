@@ -2,8 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import "./App.css";
 
 // Pi IP for the rover, "localhost" for laptop testing
-// const ROVER_HOST = "192.168.1.175";
-const ROVER_HOST = "localhost";
+const ROVER_HOST = "192.168.1.175";
 
 // Camera frame width from videos.py, used to find where an object is
 const FRAME_WIDTH = 640;
@@ -19,7 +18,9 @@ function useRoverData() {
     rgbCameraConnected: false,
     thermalCameraConnected: false,
     mode: "DRIVE",
+    driveConnected: false,
     wheels: { FL: 0, FR: 0, RL: 0, RR: 0 },
+    speedMph: { FL: 0, FR: 0, RL: 0, RR: 0 },
     drivers: {
      MDD10A_1: "UNKNOWN",
      MDD10A_2: "UNKNOWN",
@@ -57,6 +58,7 @@ detections: [],
           controllerConnected: false,
           rgbCameraConnected: false,
           thermalCameraConnected: false,
+          driveConnected: false,
           detections: [],
         }));
 
@@ -259,10 +261,16 @@ export default function RoverDashboard() {
               <div className="wheel-card" key={key}>
                 <span>{label}</span>
 
-                <strong>
-                  {data.wheels[key]}
-                  <small> RPM</small>
-                </strong>
+                <div className="wheel-values">
+                  <strong>
+                    {data.wheels[key]}
+                    <small> RPM</small>
+                  </strong>
+
+                  <small className="wheel-mph">
+                    {(data.speedMph?.[key] ?? 0).toFixed(2)} mph
+                  </small>
+                </div>
               </div>
             ))}
           </div>
@@ -287,6 +295,13 @@ export default function RoverDashboard() {
                 data.controllerConnected
                   ? "Connected"
                   : "Disconnected"
+              }`}
+            />
+
+            <StatusRow
+              ok={data.driveConnected}
+              text={`Drive (Arduino): ${
+                data.driveConnected ? "Connected" : "Disconnected"
               }`}
             />
 

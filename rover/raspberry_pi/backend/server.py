@@ -35,6 +35,27 @@ def is_controller_connected():
 
     return any(name in devices for name in CONTROLLER_NAMES)
 
+# Drive telemetry (from controller_drive_with_encoders.py)
+# The drive script saves the Arduino encoder data here
+DRIVE_TELEMETRY_FILE = "/dev/shm/rover_telemetry.json"
+
+# Ignore data older than this (drive script stopped)
+DRIVE_TIMEOUT = 2.0
+
+# Read the latest wheel RPM / speed saved by the drive script
+def get_drive_telemetry():
+    try:
+        with open(DRIVE_TELEMETRY_FILE) as file:
+            data = json.load(file)
+    except (OSError, ValueError):
+        # Drive script not running, or not on the Pi
+        return None
+
+    if time.time() - data["time"] > DRIVE_TIMEOUT:
+        return None
+
+    return data
+
 # Thermal camera (MLX90640)
 
 THERMAL_WIDTH = 32
@@ -131,21 +152,38 @@ def get_mock_rover_data(detections):
         )
         return max(0, round(value))
 
-    return {
-        "connected": True,
-        "controllerConnected": is_controller_connected(),
-        "rgbCameraConnected": detections is not None,
-        "thermalCameraConnected": mlx is not None,
-        "mode": "DRIVE",
-        "wheels": {
+    drive = get_drive_telemetry()
+
+    if drive is not None:
+        # Real encoder data from the Arduino
+        wheels = {name: round(rpm) for name, rpm in drive["rpm"].items()}
+        speed_mph = {name: round(mph, 2) for name, mph in drive["mph"].items()}
+        controller_connected = drive["controllerConnected"]
+        driver_status = "OK"
+    else:
+        # Drive script not running: mock wheels for testing
+        wheels = {
             "FL": jitter(),
             "FR": jitter(),
             "RL": jitter(),
             "RR": jitter(),
-        },
+        }
+        speed_mph = {"FL": 0, "FR": 0, "RL": 0, "RR": 0}
+        controller_connected = is_controller_connected()
+        driver_status = "UNKNOWN"
+
+    return {
+        "connected": True,
+        "controllerConnected": controller_connected,
+        "rgbCameraConnected": detections is not None,
+        "thermalCameraConnected": mlx is not None,
+        "driveConnected": drive is not None,
+        "mode": "DRIVE",
+        "wheels": wheels,
+        "speedMph": speed_mph,
         "drivers": {
-            "MDD10A_1": "OK",
-            "MDD10A_2": "OK",
+            "MDD10A_1": driver_status,
+            "MDD10A_2": driver_status,
         },
         "battery": round(random.uniform(12.4, 12.8), 1),
         "detections": detections or [],
