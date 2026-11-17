@@ -230,8 +230,6 @@ By the end of Week 9, significant progress was made toward finalizing the rover'
 
 ---
 
----
-
 ## Week 10 - Power Distribution Assembly and Motor Encoder Integration
 
 ### Accomplishments
@@ -271,5 +269,63 @@ By the end of Week 9, significant progress was made toward finalizing the rover'
 ### Week 10 Outcome
 
 By the end of Week 10, significant progress was made in assembling the rover's electrical power system and integrating motor encoder feedback into the existing control architecture. The power distribution system was assembled using a fused distribution block, soldered wiring connections, and individual circuit fuses to provide organized power delivery and electrical protection for the rover's components. Additionally, all four motor encoders were wired to the Arduino using a breadboard to share power and ground connections while maintaining independent encoder signals. The Arduino `motors.ino` program was updated to calculate individual wheel RPM and estimated linear speed from encoder measurements, while the Raspberry Pi `controller_drive.py` program was modified to receive and display this telemetry in the Python console. These changes establish the hardware connections and software foundation needed for real-time motor speed monitoring. However, the complete system still requires testing and verification to confirm that the encoder readings, speed calculations, power distribution connections, and communication between the Arduino and Raspberry Pi function correctly.
+
+---
+
+## Week 11 - PS5 Controller and Robotic Arm Integration
+
+### Accomplishments
+
+- Began integrating the robotic arm into the rover's existing Raspberry Pi control system so that the arm can eventually be controlled using the same PS5 DualSense controller used to drive the rover.
+
+- Connected the LeArm ESP32 controller directly to the Raspberry Pi through USB and verified that the connection was detected successfully as `/dev/ttyUSB0`.
+
+- Confirmed that the LeArm controller uses a CH341 USB-to-serial interface and identified its persistent serial device path for use in the Python control program.
+
+- Reconnected the PS5 DualSense controller to the Raspberry Pi through Bluetooth and verified that Linux successfully detected the controller and registered the required input devices.
+
+- Identified `/dev/input/js0` as the primary DualSense controller input and confirmed that the additional `/dev/input/js1` device corresponds to the controller's motion sensors.
+
+- Created a Python controller input test using Pygame to verify that the Raspberry Pi could continuously read joystick, trigger, D-pad, and button inputs from the DualSense controller.
+
+- Determined the Pygame axis and button mappings for the DualSense controller, including the left and right analog sticks, L1/R1, L2/R2, face buttons, and D-pad.
+
+- Kept the left analog stick reserved for the existing rover motor control system so that robotic arm inputs do not interfere with the rover's proportional driving and differential steering controls.
+
+- Created an initial serial communication test between the Raspberry Pi and the LeArm ESP32 using Python and PySerial.
+
+- Successfully sent PWM servo commands from the Raspberry Pi to the LeArm controller through USB serial communication at 9600 baud.
+
+- Verified Raspberry Pi control of the robotic arm by commanding the gripper servo to open and close through a Python test program.
+
+- Developed a new `controller_arm.py` program that reads live PS5 controller input and converts the selected controls into PWM servo commands for the robotic arm.
+
+- Tested live gripper control using the DualSense controller and confirmed that the complete control path from the PS5 controller through the Raspberry Pi and ESP32 to the robotic arm functions correctly.
+
+- Added right-stick horizontal control for Servo ID6 to rotate the robotic arm's base left and right.
+
+- Added right-stick vertical control for Servo ID5 to move the shoulder joint up and down.
+
+- Corrected the shoulder control direction after testing showed that the initial joystick Y-axis mapping was inverted.
+
+- Added L1 and R1 button control for Servo ID4 to move the elbow joint in both directions.
+
+- Expanded the safe PWM range for the elbow after testing showed that the initial minimum value of 1200 did not provide enough downward range of motion.
+
+- Added Square and X button control for Servo ID3 to adjust the wrist pitch.
+
+- Added Circle and Triangle button control for Servo ID2 to rotate the wrist.
+
+- Added L2 and R2 trigger control for Servo ID1 to open and close the gripper.
+
+- Implemented software limits for each servo to reduce the possibility of accidentally commanding the arm beyond its intended mechanical range during testing.
+
+- Added incremental servo movement so that holding a controller input moves the selected joint smoothly instead of immediately commanding the servo to a distant position.
+
+- Successfully verified direct PS5 controller control of all six robotic arm servos through the Raspberry Pi and LeArm ESP32 controller.
+
+### Week 11 Outcome
+
+By the end of Week 11, the PS5 DualSense controller was successfully integrated with the robotic arm through the Raspberry Pi. The Raspberry Pi was able to communicate directly with the LeArm ESP32 through USB serial communication while simultaneously receiving controller inputs through Bluetooth. A new `controller_arm.py` program was developed to translate DualSense inputs into PWM commands for each of the arm's six servos. The right analog stick now controls the arm's base and shoulder, L1/R1 control the elbow, Square/X control wrist pitch, Circle/Triangle control wrist rotation, and L2/R2 control the gripper. The left analog stick remains reserved for rover driving so the existing motor controls are not affected. Individual servo directions and movement ranges were tested and adjusted as needed, including correcting the inverted shoulder direction and increasing the elbow's available range of motion. The next step will be to merge the working robotic arm control functionality into the existing `controller_drive.py` program so that a single PS5 controller can operate both the rover's drive system and robotic arm at the same time.
 
 ---
